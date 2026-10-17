@@ -1,0 +1,67 @@
+*README - Secure Network Infrastructure with Port Security, Telnet and VLANs using Multilayer Switch*
+
+*File Name:* `Secure Network Infrastructure with Port Security, Telnet, and Vlans using Multilayer Switch.pkt`
+*Software:* Cisco Packet Tracer 8.2.2
+
+*1. Project Title:*
+Secure Network Infrastructure with Port Security, Telnet, and VLANs using a Multilayer Switch
+
+*2. Objective:*
+To configure a multilayer switch (Cisco 3560/3750) to:
+- Segregate traffic using VLANs
+- Secure access ports using Port Security
+- Restrict remote access using Telnet
+- Provide external connectivity via a router
+
+*3. Topology:*
+- 1x Multilayer Switch0 (Core)
+- 1x Router0 (192.168.40.1) - Connected to Switch0 Gig0/1
+- 3x PCs:
+    - PC0 - Marketing - Vlan10: 192.168.10.10 -> Fa0/3
+    - PC1 - Sales - Vlan20: 192.168.20.20 -> Fa0/2
+    - IT Purple / PC2 - Vlan30: 192.168.30.30 -> Fa0/1
+- 2x Laptops:
+    - Laptop1 - Console access to Switch0 (Console cable)
+    - Laptop0 - Connected to Router0 for remote/Telnet testing
+- Switch Management IP: 192.168.50.1
+
+*4. Requirements Implemented:*
+
+*a) VLAN Configuration:*
+- Created 3 VLANs: VLAN 10 (Marketing), VLAN 20 (Sales), VLAN 30 (IT)
+- Assigned ports to respective VLANs
+- Configured SVIs for Inter-VLAN routing:
+  `interface vlan 10 / 20 / 30`
+- Enabled `ip routing` on multilayer switch
+
+*b) Port Security:*
+- Enabled port-security on Fa0/1, Fa0/2, Fa0/3
+- Allowed only specific MAC addresses on each port
+- Violation mode set to `shutdown` / `restrict`
+
+*c) Telnet Configuration:*
+- Enabled Telnet access on Multilayer Switch
+- Configured Telnet password and authentication
+- `line vty 0 15` + `password` + `login`
+- Restricted Telnet to specific VLANs/IPs for security
+
+*d) Security Features:*
+- Password encryption `service password-encryption`
+- Login attempt limits
+- Logging and auditing
+
+*5. Testing / Results:*
+All ICMP tests in Simulation Mode are SUCCESSFUL:
+
+- PC0 -> Router0 - Successful
+- PC2 (IT) -> Router0 - Successful
+- PC1 -> Router0 - Successful
+- PC2 -> Multilayer Switch0 - Successful
+
+This proves Inter-VLAN routing works, Port Security allows authorized devices, and Telnet/Remote connectivity to Router is working.
+
+*6. How to Test:*
+1. Open the .pkt file
+2. From PC0, ping `192.168.20.20` and `192.168.30.30` to test inter-VLAN
+3. Try Telnet from Laptop0 to `192.168.50.1` (Switch) to test remote access
+4. Check security: `show port-security`, `show vlan brief`, `show ip interface brief`

@@ -1,0 +1,80 @@
+
+*README - Telnet Lab 1*
+
+*File Name:* `Telnet Lab 1.pkt`
+*Software:* Cisco Packet Tracer 8.2.2
+
+*1. Project Title:*
+Basic Telnet Configuration with Local Authentication
+
+*2. Topology:*
+- *PC0* - 192.168.1.11/24 - Fa0 -> Switch0 Fa0/1
+- *Switch0* - Vlan1: 192.168.1.2/24 - Fa0/2 -> Router0 Gig0/0
+- *Router0* - Gig0/0: 192.168.1.1/24
+- Laptop0 -> Switch0 Console, Laptop1 -> Router0 Console
+
+All devices in same subnet 192.168.1.0/24
+
+*3. Objectives (from the lab text on the right):*
+1.  Configure the Router interface with the given IP Address
+2.  Configure the Switch Vlan1 with the given IP Address
+3.  Configure the network devices with:
+    - UserName: *Cisco*
+    - Password: *CCNA*
+4.  Configure the VTY Line 0-15 on the network devices to allow:
+    - Local user database to connect to the VTY Lines.
+    - Telnet connections to the VTY Lines.
+
+*4. Configuration Implemented:*
+
+*Router0:*
+enable
+configure terminal
+interface Gig0/0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+username Cisco password CCNA
+line vty 0 15
+ login local
+ transport input telnet
+exit
+enable secret CCNA
+*Switch0:*
+enable
+configure terminal
+interface Vlan1
+ ip address 192.168.1.2 255.255.255.0
+ no shutdown
+interface Fa0/1
+ no shutdown
+interface Fa0/2
+ no shutdown
+ip default-gateway 192.168.1.1
+username Cisco password CCNA
+line vty 0 15
+ login local
+ transport input telnet
+exit
+enable secret CCNA
+*PC0:*
+IP: 192.168.1.11 Mask: 255.255.255.0 Gateway: 192.168.1.1
+
+*5. Testing / Results:*
+Simulation mode shows full L3 connectivity (bottom right):
+
+- Switch0 -> PC0 - Successful - ICMP 0.000 sec
+- Router0 -> Switch0 - Successful
+- Router0 -> PC0 - Successful
+
+*How to test Telnet:*
+From PC0 Command Prompt:
+telnet 192.168.1.2
+Username: Cisco
+Password: CCNA
+Should get Switch0 CLI.
+telnet 192.168.1.1
+Username: Cisco
+Password: CCNA
+Should get Router0 CLI.
+
+This proves Telnet with local AAA database is working.

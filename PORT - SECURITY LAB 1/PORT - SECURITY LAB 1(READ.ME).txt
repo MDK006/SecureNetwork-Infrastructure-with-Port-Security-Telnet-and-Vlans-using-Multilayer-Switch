@@ -1,0 +1,56 @@
+*README - Port Security Lab*
+
+*File Name:* `Port-Security Lab 1.pkt`
+*Software:* Cisco Packet Tracer 8.2.2
+*Network:* 192.168.10.0 / 255.255.255.0
+
+*1. Project Title:*
+Switch Port Security Configuration - Sticky MAC and Shutdown Violation
+
+*2. Topology:*
+- 2x Switches - 2960-24TT (Switch1 and Switch2)
+- Trunk link between Switch1 Fa0/1 <-> Switch2 Fa0/1 (dashed line)
+- Switch1:
+    - Gig0/1 -> PC0 (192.168.10.20)
+    - Gig0/2 -> PC2 (192.168.10.30)
+- Switch2:
+    - Gig0/1 -> PC1 (192.168.10.10)
+- 2x Laptops for console configuration via console cable
+
+*3. Objective:*
+To secure switch ports by limiting which MAC addresses are allowed.
+
+*Configuration Required:*
+
+- *Switch1 (Sw1):* Allow ONLY the MAC address of PC0 to be sticky on Gig0/1 and Gig0/2. If another MAC is detected, shutdown the port.
+    - This means only PC0 is authorized. PC2 should fail.
+
+- *Switch2 (Sw2):* Allow TWO (2) MAC addresses to be sticky on Gig0/1 and Gig0/2. Shutdown if a third MAC is detected.
+
+*4. Configuration Commands Used:*
+
+On Switch1 Gig0/1 and Gig0/2:
+interface Gig0/1
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+On Switch2 Gig0/1:
+interface Gig0/1
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+*5. Testing / Results:*
+From Simulation Panel (bottom right):
+
+- PC0 -> PC1 - *Successful* (PC0 is allowed, can reach PC1 on other switch)
+- PC1 -> PC0 - *Successful*
+- PC0 -> PC2 - *Failed* - This is EXPECTED and PROVES port-security is working. PC2 is on a port that only allows PC0's MAC, so its port went into shutdown (red dot on link).
+
+You can verify with `show port-security` and `show port-security address` on the switches.
+
+*6. How to Test:*
+If you plug an unauthorized PC into Gig0/2 on Switch1, the link light turns red and port goes to `err-disabled`. You must do `shutdown` then `no shutdown` to recover.
